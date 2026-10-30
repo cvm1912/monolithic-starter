@@ -2,8 +2,12 @@ const express = require('express');
 const dotenv = require('dotenv')
 const cors = require('cors');
 
+//imports 
+const connectDatabase = require('./src/configs/dbConfig');
+
 // Load environment variables
 dotenv.config();
+connectDatabase;
 
 // Initialize Express application
 const app = express();
@@ -20,6 +24,9 @@ app.get("/", (req, res) => {
         message: "Welcome to Uber Backend API"
     });
 });
+
+// Connect to database
+connectDatabase();
 
 // Start Express server
 const PORT = process.env.PORT || 5000;
