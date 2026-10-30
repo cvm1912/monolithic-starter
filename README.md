@@ -19,9 +19,11 @@ npm init -y
 | redis | ^6.3.1 |
 | socket.io | ^4.8.4 |
 | nodemon | ^3.1.14 |
+| winston | ^3.x.x |
+| winston-daily-rotate-file | ^5.x.x |
 
 ```bash
-npm install express dotenv mongoose bcryptjs cors redis socket.io nodemon
+npm install express dotenv mongoose bcryptjs cors redis socket.io nodemon winston winston-daily-rotate-file
 ```
 
 ## Folder Structure
