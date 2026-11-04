@@ -5,6 +5,7 @@ const cors = require('cors');
 //imports 
 const connectDatabase = require('./src/configs/dbConfig');
 const logger = require('./src/configs/loggerConfig');
+const pingRouter = require('./src/routes/ping-routes');
 
 // Load environment variables
 dotenv.config();
@@ -16,6 +17,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Routes
+app.use('/api', pingRouter);
 
 // Home route
 app.get("/", (req, res) => {
