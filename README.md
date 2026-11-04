@@ -1,47 +1,122 @@
 # monolithic-starter
-A Mongo Database monolithic starter application
 
-## Setup
+A production-ready Node.js monolithic starter application built with Express, MongoDB (Mongoose), and a layered architecture. Comes pre-wired with logging, CORS, environment config, real-time support via Socket.IO, Redis, and a structured error-handling system.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Runtime | Node.js (CommonJS) |
+| Framework | Express v5 |
+| Database | MongoDB via Mongoose |
+| Cache / PubSub | Redis |
+| Real-time | Socket.IO |
+| Logging | Winston + Daily Rotate File |
+| Auth helpers | bcryptjs |
+| Config | dotenv |
+| Dev server | nodemon |
+
+---
+
+## Getting Started
+
+### 1. Clone and install
 
 ```bash
-npm init -y
+git clone https://github.com/cvm1912/monolithic-starter.git
+cd monolithic-starter
+npm install
 ```
 
-## Dependencies
+### 2. Configure environment
 
-| Package | Version |
-|---------|--------|
-| express | ^5.3.0 |
-| dotenv | ^18.0.9 |
-| mongoose | ^9.11.4 |
-| bcryptjs | ^3.0.3 |
-| cors | ^2.8.6 |
-| redis | ^6.3.1 |
-| socket.io | ^4.8.4 |
-| nodemon | ^3.1.14 |
-| winston | ^3.x.x |
-| winston-daily-rotate-file | ^5.x.x |
+Create a `.env` file in the project root:
+
+```env
+PORT=8080
+MONGODB_URI=mongodb+srv://<user>:<password>@cluster0.xxxxx.mongodb.net/<dbname>
+```
+
+### 3. Start the server
 
 ```bash
-npm install express dotenv mongoose bcryptjs cors redis socket.io nodemon winston winston-daily-rotate-file
+# Development (auto-restart on file changes)
+npx nodemon server.js
+
+# Production
+node server.js
 ```
 
-## Folder Structure
+The server starts at `http://localhost:8080` (or the port set in `.env`).
+
+---
+
+## API Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/` | Health check — returns a welcome message |
+| GET | `/api/ping` | Ping endpoint — returns `{ success: true, message: "pong" }` |
+
+---
+
+## Project Structure
 
 ```
 monolithic-starter/
 ├── src/
 │   ├── configs/
+│   │   ├── dbConfig.js          # Mongoose connection setup
+│   │   └── loggerConfig.js      # Winston logger with daily log rotation
 │   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── repositories/
+│   │   └── ping-controller.js   # Request handlers
+│   ├── middleware/               # Custom Express middleware (auth, error handling, etc.)
+│   ├── models/                   # Mongoose schema/model definitions
+│   ├── repositories/             # Data access layer
 │   ├── routes/
-│   ├── services/
+│   │   └── ping-routes.js        # Route definitions
+│   ├── services/                 # Business logic layer
 │   └── utils/
-├── .env
+│       ├── AppError.js           # Custom error classes
+│       └── request-helper.js     # AsyncLocalStorage for correlation IDs
+├── logs/                         # Auto-generated daily log files
+├── .env                          # Environment variables (not committed)
 ├── .gitignore
 ├── package.json
 ├── README.md
-└── server.js
+└── server.js                     # App entry point
 ```
+
+---
+
+## Error Handling
+
+Custom error classes are defined in `src/utils/AppError.js`:
+
+| Class | Status | Use Case |
+|---|---|---|
+| `AppError` | any | Base error class |
+| `NotFoundError` | 404 | Resource not found |
+| `ValidationError` | 400 | Invalid input |
+| `UnauthorizedError` | 401 | Auth failures |
+| `InternalServerError` | 500 | Unexpected server errors |
+
+---
+
+## Logging
+
+Logs are written to the console and to `logs/application-YYYY-MM-DD-HH.log` via Winston with daily rotation.
+
+- Max file size: 20 MB
+- Retention: 14 days
+- Format: JSON with timestamp and correlation ID
+
+Correlation IDs are tracked per-request using Node's `AsyncLocalStorage`, making it easy to trace a single request across log lines.
+
+---
+
+## License
+
+ISC
